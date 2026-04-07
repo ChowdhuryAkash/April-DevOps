@@ -1,5 +1,5 @@
 ================================================================================
-                🚀 DEVOPS PROJECT ARCHITECTURE (MONOLITH REACT)
+                🚀 DEVOPS PROJECT ARCHITECTURE (MONOLITH REACT) || Initial Architecture
 ================================================================================
 
 
@@ -166,7 +166,7 @@
 ================================================================================
 📊 MONITORING & LOGGING
 ================================================================================
-
+Prometheus and Grafana
    ┌────────────────────────────────────────────┐
    │ Azure Application Insights                 │
    │ - Request tracking                         │
@@ -175,15 +175,15 @@
    └────────────────────────────────────────────┘
 
    ┌────────────────────────────────────────────┐
-   │ Azure Monitor                             │
-   │ - CPU / Memory metrics                    │
-   │ - Alerts                                 │
+   │ Azure Monitor                              │
+   │ - CPU / Memory metrics                     │
+   │ - Alerts                                   │
    └────────────────────────────────────────────┘
 
    ┌────────────────────────────────────────────┐
-   │ Application Logs                          │
-   │ - Console logs                            │
-   │ - Error tracking (Winston / Sentry)       │
+   │ Application Logs                           │
+   │ - Console logs                             │
+   │ - Error tracking (Winston / Sentry)        │
    └────────────────────────────────────────────┘
 
 
@@ -212,5 +212,9 @@
 ✔ Fix → restart from PR  
 
 ================================================================================
-END
+Later On Architecture
 ================================================================================
+* Use Terraform to setup the environment
+* Use Kubernetes for Deployment
+* Use Java Maven Project
+* Use Full stack(Frontend + Backend + Databse) project
