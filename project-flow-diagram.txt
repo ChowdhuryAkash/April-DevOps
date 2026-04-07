@@ -1,0 +1,216 @@
+================================================================================
+                🚀 DEVOPS PROJECT ARCHITECTURE (MONOLITH REACT)
+================================================================================
+
+
+👨‍💻 DEVELOPERS (LOCAL / EC2)
+--------------------------------------------------------------------------------
+   Dev A / Dev B / Dev C
+        │
+        │  (Code + Unit Tests - Jest)
+        ▼
+   Feature Branch (feature/*)
+        │
+        │  git push
+        ▼
+
+
+🔁 VERSION CONTROL (GITHUB / AZURE REPOS)
+--------------------------------------------------------------------------------
+   ┌──────────────────────────────┐
+   │           REPOSITORY         │
+   │                              │
+   │  main     ← production       │
+   │  develop  ← integration      │
+   │  feature/*← dev branches     │
+   └──────────────────────────────┘
+        │
+        │ Pull Request (feature → develop)
+        ▼
+
+
+⚙️ PR PIPELINE (AZURE DEVOPS - CI VALIDATION)
+--------------------------------------------------------------------------------
+   Trigger: PR Created
+
+   ┌────────────────────────────────────────────┐
+   │ 🔍 CODE QUALITY & TESTING                  │
+   │--------------------------------------------│
+   │ - Install Dependencies                     │
+   │ - Unit Testing (Jest)                      │
+   │ - Linting (ESLint)                         │
+   │ - SonarQube Scan                           │
+   │    • Bugs                                  │
+   │    • Vulnerabilities                       │
+   │    • Code Coverage                         │
+   └────────────────────────────────────────────┘
+
+        │
+        │ PASS ✅ / FAIL ❌
+        ▼
+
+   👨‍💼 REVIEWER (Senior Dev / Lead)
+        │
+        │ Approve PR
+        ▼
+   MERGE → develop
+
+
+🚀 CI PIPELINE (POST-MERGE BUILD PIPELINE)
+--------------------------------------------------------------------------------
+   Trigger: Merge to develop
+
+   ┌────────────────────────────────────────────┐
+   │ 🏗 BUILD & PACKAGE                         │
+   │--------------------------------------------│
+   │ - Install Dependencies                     │
+   │ - Run Unit Tests                           │
+   │ - SonarQube (optional re-check)            │
+   │ - Build React App                          │
+   │ - Docker Image Build                       │
+   │    → react-app:v1                          │
+   └────────────────────────────────────────────┘
+        │
+        ▼
+
+   ┌────────────────────────────────────────────┐
+   │ 📦 IMAGE REGISTRY                          │
+   │--------------------------------------------│
+   │ Azure Container Registry (ACR)             │
+   │ - Stores Docker Images                     │
+   │ - Versioned Tags (v1, v2, latest)          │
+   └────────────────────────────────────────────┘
+        │
+        ▼
+
+
+🚀 CD PIPELINE (MULTI-ENV DEPLOYMENT)
+================================================================================
+
+
+🔹 ENVIRONMENT 1: DEV
+--------------------------------------------------------------------------------
+   Azure App Service (DEV)
+        │
+        │ Pull Image from ACR
+        ▼
+   Running Container
+
+   👨‍💻 DEV + QA (Light Testing)
+   --------------------------------
+   - Smoke Testing
+   - Basic Functional Testing
+   - Tools:
+     • Browser
+     • Postman
+
+        │
+        ▼
+   🔐 Approval Gate (Optional / Auto)
+
+
+🔹 ENVIRONMENT 2: QA
+--------------------------------------------------------------------------------
+   Azure App Service (QA)
+        │
+        │ Same Image (NO rebuild)
+        ▼
+   Running Container
+
+   🧪 QA TEAM (FULL TESTING)
+   --------------------------------
+   - Functional Testing
+   - Integration Testing
+   - Regression Testing
+   - API Automation (Postman + Newman)
+   - Performance Testing (k6 / JMeter)
+
+   📊 Tools:
+   - Postman / Newman
+   - k6 / JMeter
+   - Jira (Bug tracking)
+
+        │
+        ▼
+   🔐 Manual Approval (QA Lead)
+
+
+🔹 ENVIRONMENT 3: UAT
+--------------------------------------------------------------------------------
+   Azure App Service (UAT)
+        │
+        ▼
+   Running Container
+
+   🧑‍💼 BUSINESS / CLIENT
+   --------------------------------
+   - Real-world scenario testing
+   - UI/UX validation
+   - Business logic validation
+
+        │
+        ▼
+   🔐 Manual Approval (Business + Manager)
+
+
+🔹 ENVIRONMENT 4: PROD
+--------------------------------------------------------------------------------
+   Azure App Service (PROD)
+        │
+        ▼
+   LIVE APPLICATION 🌍
+
+   👥 End Users Access Application
+
+
+================================================================================
+📊 MONITORING & LOGGING
+================================================================================
+
+   ┌────────────────────────────────────────────┐
+   │ Azure Application Insights                 │
+   │ - Request tracking                         │
+   │ - Failure detection                        │
+   │ - Performance monitoring                   │
+   └────────────────────────────────────────────┘
+
+   ┌────────────────────────────────────────────┐
+   │ Azure Monitor                             │
+   │ - CPU / Memory metrics                    │
+   │ - Alerts                                 │
+   └────────────────────────────────────────────┘
+
+   ┌────────────────────────────────────────────┐
+   │ Application Logs                          │
+   │ - Console logs                            │
+   │ - Error tracking (Winston / Sentry)       │
+   └────────────────────────────────────────────┘
+
+
+================================================================================
+🔁 ROLLBACK STRATEGY
+================================================================================
+
+   If PROD fails:
+
+   ┌────────────────────────────────────────────┐
+   │ Select previous image from ACR            │
+   │ Redeploy via pipeline                    │
+   │ Restore stable version                   │
+   └────────────────────────────────────────────┘
+
+
+================================================================================
+🧠 KEY PRINCIPLES
+================================================================================
+
+✔ Same Docker Image flows across all environments  
+✔ No rebuild between DEV → QA → PROD  
+✔ Testing increases as we move forward  
+✔ Approvals control promotion  
+✔ Fail anywhere → pipeline stops  
+✔ Fix → restart from PR  
+
+================================================================================
+END
+================================================================================
