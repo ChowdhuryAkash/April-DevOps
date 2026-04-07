@@ -1,0 +1,213 @@
+==========================
+PROJECT REQUIREMENT (FINAL)
+==========================
+
+PROJECT:
+Cloud-Native Microservices MERN Application with End-to-End DevOps Lifecycle
+
+
+==========================
+1. OBJECTIVE
+==========================
+
+Build a production-grade microservices system with complete DevOps practices:
+CI/CD, code quality analysis, automated testing, containerization, orchestration,
+multi-environment deployment, monitoring, and infrastructure as code.
+
+
+==========================
+2. APPLICATION ARCHITECTURE
+==========================
+
+Tech Stack:
+- Frontend: React
+- Backend: Node.js (Express)
+- Database: MongoDB
+
+Microservices:
+- Auth Service
+- Product Service
+- Order Service
+- Frontend Service
+
+
+==========================
+3. VERSION CONTROL
+==========================
+
+Platform:
+- GitHub / Azure Repos
+
+Branching:
+- main (prod)
+- develop
+- feature/*
+- hotfix/*
+
+
+==========================
+4. CI/CD PIPELINE (AZURE DEVOPS)
+==========================
+
+Pipeline Type:
+Multi-stage YAML pipeline
+
+STAGES:
+
+1. CODE QUALITY & BUILD:
+   - Install dependencies
+   - Run unit tests
+   - SonarQube code analysis (bugs, vulnerabilities, coverage)
+   - Build application
+
+2. DOCKER BUILD & PUSH:
+   - Build Docker images (per service)
+   - Tag and push to AWS ECR
+
+3. TESTING STAGES:
+   - Unit Testing (Jest / Mocha)
+   - Functional Testing (API testing - Postman/Newman)
+   - Performance Testing (k6 / JMeter basic load test)
+
+4. DEPLOYMENT STAGES:
+
+   DEV:
+   - Auto deploy (develop branch)
+   - Kubernetes namespace: dev
+
+   QA:
+   - Auto deploy after DEV
+   - Run functional tests
+
+   UAT:
+   - Manual approval
+   - Business validation
+
+   PROD:
+   - Manual approval
+   - Stable production release
+
+
+==========================
+5. CONTAINERIZATION
+==========================
+
+Tool:
+- Docker
+
+- Multi-stage builds
+- Optimized lightweight images
+- Separate Dockerfile per service
+
+
+==========================
+6. ORCHESTRATION (KUBERNETES - EKS)
+==========================
+
+Components:
+- Deployments
+- Services
+- Ingress (ALB)
+- ConfigMaps
+- Secrets
+- HPA (auto-scaling)
+
+Namespaces:
+- dev, qa, uat, prod
+
+
+==========================
+7. INFRASTRUCTURE (AWS + TERRAFORM)
+==========================
+
+Services:
+- EKS (cluster)
+- ECR (image registry)
+- VPC, Subnets
+- IAM
+- S3
+- CloudWatch
+
+Provisioning:
+- Terraform (one-command infra setup)
+
+
+==========================
+8. MONITORING & LOGGING
+==========================
+
+- Prometheus (metrics)
+- Grafana (dashboards)
+- CloudWatch (logs)
+
+- Alerts for failures and resource thresholds
+
+
+==========================
+9. SECURITY
+==========================
+
+- IAM role-based access
+- Kubernetes Secrets
+- Private Docker registry (ECR)
+- Secure Ingress exposure
+
+
+==========================
+10. ENVIRONMENT STRATEGY
+==========================
+
+Flow:
+DEV → QA → UAT → PROD
+
+- Isolated Kubernetes namespaces
+- Environment-specific configs
+- Controlled promotion between stages
+
+
+==========================
+11. END-TO-END FLOW
+==========================
+
+1. Developer pushes code (GitHub/Azure Repo)
+
+2. Pipeline triggers:
+   - Run unit tests
+   - SonarQube analysis
+   - Build application
+
+3. Docker images built and pushed to ECR
+
+4. Automated testing:
+   - Functional tests
+   - Performance tests
+
+5. Deployment flow:
+   - DEV (auto)
+   - QA (auto + testing)
+   - UAT (manual approval)
+   - PROD (manual approval)
+
+6. Kubernetes performs rolling updates
+
+7. Monitoring & logging:
+   - Metrics via Prometheus
+   - Logs via CloudWatch
+   - Alerts on failure
+
+
+==========================
+12. OUTCOME
+==========================
+
+- Full CI/CD automation
+- Code quality enforcement (SonarQube)
+- Multi-level testing (unit, functional, performance)
+- Scalable Kubernetes deployment
+- Infrastructure as Code (Terraform)
+- Production-grade DevOps system
+
+
+==========================
+END
+==========================
