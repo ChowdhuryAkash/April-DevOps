@@ -1,0 +1,264 @@
+PROJECT: END-TO-END DEVOPS INFRA SETUP (CI PIPELINE + SONAR + AGENT)
+
+---
+
+1. SOURCE CODE SETUP (GITHUB)
+
+---
+
+* Create GitHub repository
+
+* Clone repo into Dev machine / EC2
+
+* Create branches:
+  main
+  develop
+  feature/<name>
+
+* Push initial React project to GitHub
+
+---
+
+2. AZURE DEVOPS PROJECT SETUP
+
+---
+
+* Create new Project in Azure DevOps
+
+* Go to:
+  Project Settings → Service Connections
+
+* Create GitHub Service Connection:
+
+  * Type: GitHub (OAuth)
+  * Authorize account
+  * Grant access to all pipelines
+
+---
+
+3. SELF-HOSTED AGENT SETUP (EC2)
+
+---
+
+* Launch EC2 (Ubuntu recommended)
+
+* Install dependencies:
+
+  * Node.js
+  * npm
+  * Java (required for Sonar Scanner)
+
+* Download Azure DevOps Agent:
+  Azure DevOps → Project Settings → Agent Pools → New Agent
+
+* Extract agent package:
+  tar zxvf agent.tar.gz
+
+* Configure agent:
+  ./config.sh
+
+  * Enter Azure DevOps URL
+  * Enter PAT token
+  * Select Agent Pool
+  * Give agent name
+
+* Start agent manually:
+  ./run.sh
+
+* (Optional - recommended) Run as service:
+  sudo ./svc.sh install
+  sudo ./svc.sh start
+
+---
+
+4. SONARQUBE SERVER SETUP (EC2)
+
+---
+
+* Launch separate EC2 instance
+
+* Install Java:
+  sudo apt install openjdk-17-jdk
+
+* Download SonarQube:
+  unzip sonar.zip
+
+* Start SonarQube:
+  cd sonarqube/bin/linux-x86-64
+  ./sonar.sh start
+
+* Open in browser:
+  http://<EC2-IP>:9000
+
+* Login:
+  admin / admin
+
+* Create:
+
+  * Project (key = Doctor)
+  * Token (for authentication)
+
+---
+
+5. SONAR SCANNER SETUP (AGENT MACHINE)
+
+---
+
+* Download Sonar Scanner on agent EC2
+
+* Extract and configure:
+  /opt/sonar-scanner/
+
+* Add to PATH:
+  export PATH=$PATH:/opt/sonar-scanner/bin
+
+* Verify:
+  sonar-scanner -v
+
+---
+
+6. PROJECT CONFIGURATION FOR SONAR
+
+---
+
+* Create file in repo:
+  sonar-project.properties
+
+* Add:
+  sonar.projectKey=Doctor
+  sonar.sources=src
+  sonar.host.url=http://<SONAR-IP>:9000
+  sonar.login=<TOKEN>
+  sonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+---
+
+7. AZURE DEVOPS PIPELINE CREATION
+
+---
+
+* Go to:
+  Pipelines → New Pipeline
+
+* Select:
+  GitHub → Select repo
+
+* Choose:
+  Existing YAML
+
+* Create:
+  azure-pipelines.yml
+
+---
+
+8. PIPELINE VARIABLES (SECURITY)
+
+---
+
+* Go to:
+  Pipelines → Library
+
+* Create Variable Group:
+  sonar-secrets
+
+* Add:
+  SONAR_HOST_URL = http://<IP>:9000
+  SONAR_TOKEN = <secret>
+
+* Mark token as secret
+
+---
+
+9. PIPELINE EXECUTION FLOW
+
+---
+
+Pipeline runs on PR:
+
+* Install Node.js
+* npm install
+* Run unit tests with coverage
+* Build React app
+* Run Sonar Scanner
+* Wait for processing
+* Call Sonar API for Quality Gate
+* Fail or pass pipeline based on result
+
+---
+
+10. QUALITY GATE API INTEGRATION
+
+---
+
+* Use curl:
+  /api/qualitygates/project_status
+
+* Authenticate using:
+  TOKEN:
+
+* Parse JSON using jq
+
+* Logic:
+  status != OK → exit 1
+  status == OK → pass
+
+---
+
+11. GITHUB PR INTEGRATION
+
+---
+
+* Ensure pipeline linked with GitHub repo
+
+* Pipeline runs on PR automatically
+
+* GitHub shows:
+  ✔ Pipeline status
+
+---
+
+12. BRANCH PROTECTION RULE
+
+---
+
+* GitHub → Settings → Branches
+
+* Add rule for:
+  develop
+
+* Enable:
+  ✔ Require PR before merge
+  ✔ Require status checks
+  ✔ Require reviewer approval
+
+---
+
+13. FINAL SYSTEM FLOW
+
+---
+
+Developer → Push → PR →
+
+↓
+
+Azure Pipeline:
+✔ Test
+✔ Build
+✔ Sonar Scan
+✔ Quality Gate
+
+↓
+
+GitHub:
+✔ Shows status
+
+↓
+
+Leader:
+✔ Reviews
+✔ Approves
+✔ Merges
+
+---
+
+## STATUS: FULL DEVOPS INFRA + CI PIPELINE BUILT
