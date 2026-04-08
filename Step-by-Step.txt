@@ -1,0 +1,20 @@
+    GitHub n Source Code
+---------------------------
+made an ec2 instance as a dev1
+wrote code in react
+created repo in github
+push code there in main
+added collaborator as  dev2
+now they both can push code in the repo
+created main, develop branch in the repo
+everyone will push code to feature/name branch then they will create PR
+
+
+
+     Azure DevOps
+--------------------
+
+Created Project in Azure DevOps
+create agent pool
+create PAT
+created agent what is allltime online (Self Hosted Agent)
